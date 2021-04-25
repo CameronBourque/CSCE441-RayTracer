@@ -1,14 +1,11 @@
 #include "Sphere.h"
 
-Sphere::Sphere(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, glm::vec3 _ka,
-               float _s) :
-               pos(_pos),
-               scale(_scale),
-               rotation(_rotation),
-               kd(_kd),
-               ks(_ks),
-               ka(_ka),
-               s(_s)
+Sphere::Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation, glm::vec3 kd, glm::vec3 ks, glm::vec3 ka, float s) :
+               Shape(pos, scale, rotation, kd, ks, ka, s)
+{}
+
+Sphere::Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation) :
+        Shape(pos, scale, rotation)
 {}
 
 Sphere::~Sphere() {}

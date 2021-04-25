@@ -1,20 +1,27 @@
 #ifndef _SCENE_H_
 #define _SCENE_H_
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include <vector>
+#include <memory>
+
 #include "Camera.h"
+#include "Shape.h"
 #include "Sphere.h"
 #include "Light.h"
+#include "Plane.h"
 
-namespace Scene
+class Scene
 {
-    void scene1();
-    void scene2();
-//    static void scene3();
-//    static void scene4();
-//    static void scene5();
-//    static void scene6();
-//    static void scene7();
-//    static void scene8();
-}
+public:
+    Scene(int _scene);
+    ~Scene();
+
+private:
+    int scene;
+    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<Light>> lights;
+};
 
 #endif

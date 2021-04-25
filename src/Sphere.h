@@ -5,21 +5,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Sphere
+#include "Shape.h"
+
+class Sphere : public Shape
 {
 public:
-    Sphere(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, glm::vec3 _ka,
-           float _s);
+    Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation, glm::vec3 kd, glm::vec3 ks, glm::vec3 ka, float s);
+    Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation);
     ~Sphere();
-
-private:
-    glm::vec3 pos;
-    glm::vec3 scale;
-    glm::vec3 rotation;
-    glm::vec3 kd;
-    glm::vec3 ks;
-    glm::vec3 ka;
-    float s;
 };
 
 #endif

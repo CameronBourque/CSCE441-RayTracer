@@ -37,3 +37,9 @@ std::shared_ptr<std::vector<glm::vec3>> Camera::generateRays(float z, float imag
     // Return vector
     return points;
 }
+
+void Camera::generateScene(Scene scene, int imageSize)
+{
+    // TODO
+    return;
+}

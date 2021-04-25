@@ -1,85 +1,175 @@
 #include "Scene.h"
 
-namespace Scene {
-    void scene1() {
-        Sphere red(glm::vec3(-0.5f, 1.0f, 1.0f),
-                   glm::vec3(1.0f),
-                   glm::vec3(0.0f),
-                   glm::vec3(1.0f, 0.0f, 0.0f),
-                   glm::vec3(1.0f, 1.0f, 0.5f),
-                   glm::vec3(0.1f, 0.1f, 0.1f),
-                   100.0f
-        );
+Scene::Scene(int _scene) :
+             scene(_scene)
+{
+    std::shared_ptr<Shape> redSphere;
+    std::shared_ptr<Shape> greenSphere;
+    std::shared_ptr<Shape> blueSphere;
+    std::shared_ptr<Shape> refSphere1;
+    std::shared_ptr<Shape> refSphere2;
+    std::shared_ptr<Shape> floor;
+    std::shared_ptr<Shape> wall;
 
-        Sphere green(glm::vec3(0.5f, -1.0f, -1.0f),
-                     glm::vec3(1.0f),
-                     glm::vec3(0.0f),
-                     glm::vec3(0.0f, 1.0f, 0.0f),
-                     glm::vec3(1.0f, 1.0f, 0.5f),
-                     glm::vec3(0.1f, 0.1f, 0.1f),
-                     100.0f
-        );
+    std::shared_ptr<Light> light1;
+    std::shared_ptr<Light> light2;
 
-        Sphere blue(glm::vec3(0.0f, 1.0f, 0.0f),
-                    glm::vec3(1.0f),
-                    glm::vec3(0.0f),
-                    glm::vec3(0.0f, 0.0f, 1.0f),
-                    glm::vec3(1.0f, 1.0f, 0.5f),
-                    glm::vec3(0.1f, 0.1f, 0.1f),
-                    100.0f
-        );
+    switch (scene)
+    {
+        case 1:
+        case 2:
+        case 8:
+            redSphere = std::make_shared<Sphere>(glm::vec3(-0.5f, 1.0f, 1.0f),
+                                                 glm::vec3(1.0f),
+                                                 glm::vec3(0.0f),
+                                                 glm::vec3(1.0f, 0.0f, 0.0f),
+                                                 glm::vec3(1.0f, 1.0f, 0.5f),
+                                                 glm::vec3(0.1f, 0.1f, 0.1f),
+                                                 100.0f
+            );
+            shapes.push_back(redSphere);
 
-        Light light(glm::vec3(-2.0f, 1.0f, 1.0f),
-                    1.0f
-        );
+            greenSphere = std::make_shared<Sphere>(glm::vec3(0.5f, -1.0f, -1.0f),
+                                                   glm::vec3(1.0f),
+                                                   glm::vec3(0.0f),
+                                                   glm::vec3(0.0f, 1.0f, 0.0f),
+                                                   glm::vec3(1.0f, 1.0f, 0.5f),
+                                                   glm::vec3(0.1f, 0.1f, 0.1f),
+                                                   100.0f
+            );
+            shapes.push_back(greenSphere);
 
-        // TODO: Generate scene 1 image
+            blueSphere = std::make_shared<Sphere>(glm::vec3(0.0f, 1.0f, 0.0f),
+                                                  glm::vec3(1.0f),
+                                                  glm::vec3(0.0f),
+                                                  glm::vec3(0.0f, 0.0f, 1.0f),
+                                                  glm::vec3(1.0f, 1.0f, 0.5f),
+                                                  glm::vec3(0.1f, 0.1f, 0.1f),
+                                                  100.0f
+            );
+            shapes.push_back(blueSphere);
+
+            light1 = std::make_shared<Light>(glm::vec3(-2.0f, 1.0f, 1.0f),
+                                             1.0f
+            );
+            lights.push_back(light1);
+
+            break;
+
+        case 3:
+            redSphere = std::make_shared<Sphere>(glm::vec3(0.5f, 0.0f, 0.5f),
+                                                 glm::vec3(0.5f, 0.6f, 0.2f),
+                                                 glm::vec3(0.0f),
+                                                 glm::vec3(1.0f, 0.0f, 0.0f),
+                                                 glm::vec3(1.0f, 1.0f, 0.5f),
+                                                 glm::vec3(0.1f, 0.1f, 0.1f),
+                                                 100.0f
+            );
+            shapes.push_back(redSphere);
+
+            greenSphere = std::make_shared<Sphere>(glm::vec3(-0.5f, 0.0f, -0.5f),
+                                                   glm::vec3(1.0f),
+                                                   glm::vec3(0.0f),
+                                                   glm::vec3(0.0f, 1.0f, 0.0f),
+                                                   glm::vec3(1.0f, 1.0f, 0.5f),
+                                                   glm::vec3(0.1f, 0.1f, 0.1f),
+                                                   100.0f
+            );
+            shapes.push_back(greenSphere);
+
+            floor = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
+                                            glm::vec3(M_PI / 2, 0.0f, 0.0f), //TODO: Y+ up
+                                            glm::vec3(1.0f, 1.0f, 1.0f),
+                                            glm::vec3(0.0f, 0.0f, 0.0f),
+                                            glm::vec3(0.1f, 0.1f, 0.1f),
+                                            0.0f
+            );
+            shapes.push_back(floor);
+
+            light1 = std::make_shared<Light>(glm::vec3(1.0f, 2.0f, 2.0f),
+                                             0.5f
+            );
+            lights.push_back(light1);
+
+            light2 = std::make_shared<Light>(glm::vec3(-1.0f, 2.0f, -1.0f),
+                                             0.5f
+            );
+            lights.push_back(light2);
+
+            break;
+
+        case 4:
+        case 5:
+            redSphere = std::make_shared<Sphere>(glm::vec3(-0.5f, 1.0f, 1.0f),
+                                                 glm::vec3(1.0f),
+                                                 glm::vec3(0.0f),
+                                                 glm::vec3(1.0f, 0.0f, 0.0f),
+                                                 glm::vec3(1.0f, 1.0f, 0.5f),
+                                                 glm::vec3(0.1f, 0.1f, 0.1f),
+                                                 100.0f
+            );
+            shapes.push_back(redSphere);
+
+            blueSphere = std::make_shared<Sphere>(glm::vec3(0.0f, 1.0f, 0.0f),
+                                                  glm::vec3(1.0f),
+                                                  glm::vec3(0.0f),
+                                                  glm::vec3(0.0f, 0.0f, 1.0f),
+                                                  glm::vec3(1.0f, 1.0f, 0.5f),
+                                                  glm::vec3(0.1f, 0.1f, 0.1f),
+                                                  100.0f
+            );
+            shapes.push_back(blueSphere);
+
+            floor = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
+                                            glm::vec3(0.0f, 0.0f, 0.0f), //TODO: Y+ up
+                                            glm::vec3(1.0f, 1.0f, 1.0f),
+                                            glm::vec3(0.0f, 0.0f, 0.0f),
+                                            glm::vec3(0.1f, 0.1f, 0.1f),
+                                            0.0f
+            );
+            shapes.push_back(floor);
+
+            wall = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
+                                           glm::vec3(0.0f, 0.0f, 0.0f), //TODO: Z+ up
+                                           glm::vec3(1.0f, 1.0f, 1.0f),
+                                           glm::vec3(0.0f, 0.0f, 0.0f),
+                                           glm::vec3(0.1f, 0.1f, 0.1f),
+                                           0.0f
+            );
+            shapes.push_back(wall);
+
+            refSphere1 = std::make_shared<Sphere>(glm::vec3(-0.5f, 0.0f, -0.5f),
+                                                  glm::vec3(1.0f),
+                                                  glm::vec3(0.0f)
+            );
+            shapes.push_back(refSphere1);
+
+            refSphere2 = std::make_shared<Sphere>(glm::vec3(1.5f, 0.0f, -1.5f),
+                                                  glm::vec3(1.0f),
+                                                  glm::vec3(0.0f)
+            );
+            shapes.push_back(refSphere2);
+
+            light1 = std::make_shared<Light>(glm::vec3(-1.0f, 2.0f, 1.0f),
+                                             0.5f
+            );
+            lights.push_back(light1);
+
+            light2 = std::make_shared<Light>(glm::vec3(0.5f, -0.5f, 0.0f),
+                                             0.5f
+            );
+            lights.push_back(light2);
+            break;
+
+        case 6:
+        case 7:
+            //TODO: Actual shapes...
+
+            break;
+
+        default:
+            break;
     }
-
-    void scene2() {
-        Sphere red(glm::vec3(-0.5f, 1.0f, 1.0f),
-                   glm::vec3(1.0f),
-                   glm::vec3(0.0f),
-                   glm::vec3(1.0f, 0.0f, 0.0f),
-                   glm::vec3(1.0f, 1.0f, 0.5f),
-                   glm::vec3(0.1f, 0.1f, 0.1f),
-                   100.0f
-        );
-
-        Sphere green(glm::vec3(0.5f, -1.0f, -1.0f),
-                     glm::vec3(1.0f),
-                     glm::vec3(0.0f),
-                     glm::vec3(0.0f, 1.0f, 0.0f),
-                     glm::vec3(1.0f, 1.0f, 0.5f),
-                     glm::vec3(0.1f, 0.1f, 0.1f),
-                     100.0f
-        );
-
-        Sphere blue(glm::vec3(0.0f, 1.0f, 0.0f),
-                    glm::vec3(1.0f),
-                    glm::vec3(0.0f),
-                    glm::vec3(0.0f, 0.0f, 1.0f),
-                    glm::vec3(1.0f, 1.0f, 0.5f),
-                    glm::vec3(0.1f, 0.1f, 0.1f),
-                    100.0f
-        );
-
-        Light light(glm::vec3(-2.0f, 1.0f, 1.0f),
-                    1.0f
-        );
-
-        // TODO: Generate scene 2 image
-    }
-
-    //void Scene::scene3() {}
-
-    //void Scene::scene4() {}
-
-    //void Scene::scene5() {}
-
-    //void Scene::scene6() {}
-
-    //void Scene::scene7() {}
-
-    //void Scene::scene8() {}
 }
+
+Scene::~Scene() {}

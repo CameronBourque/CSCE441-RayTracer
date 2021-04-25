@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Scene.h"
+
 class Camera
 {
 public:
@@ -17,6 +19,8 @@ public:
     ~Camera();
 
     std::shared_ptr<std::vector<glm::vec3>> generateRays(float z, float imageWidth, float imageHeight);
+
+    void generateScene(Scene scene, int imageSize);
 
 private:
     glm::vec3 pos;

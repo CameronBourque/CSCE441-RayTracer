@@ -26,7 +26,13 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	int scene = atoi(argv[1]);
+	int sceneNum = atoi(argv[1]);
+	if(sceneNum < 1 || sceneNum > 8)
+    {
+	    cout << "Invalid scene number. Should be between 1-8." << endl;
+	    return 0;
+    }
+
 	int imageSize = atoi(argv[2]);
 	string imageFilename(argv[3]);
 
@@ -37,17 +43,8 @@ int main(int argc, char **argv)
         cout << point.x << ", " << point.y << ", " << point.z << endl;
     }
 
-    switch (scene) {
-        case 1:
-            Scene::scene1();
-            break;
-        case 2:
-            Scene::scene2();
-            break;
-        default:
-            cout << "Invalid scene number. Pick a scene from 1-8." << endl;
-            break;
-    }
+    std::shared_ptr<Scene> scene = make_shared<Scene>(sceneNum);
+    camera.generateScene(scene, imageSize);
 	
 	return 0;
 }
