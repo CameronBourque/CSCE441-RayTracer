@@ -17,5 +17,5 @@ cmake ..
 make -j
 
 # Run it
-./$PROGRAM_NAME 1 3 yum
+./$PROGRAM_NAME 1 1024 yum.png
 

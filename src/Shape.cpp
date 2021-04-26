@@ -1,5 +1,17 @@
 #include "Shape.h"
 
+Shape::Shape() :
+    pos(0.0f),
+    scale(0.0f),
+    rotation(0.0f),
+    kd(0.0f),
+    ks(0.0f),
+    ka(0.0f),
+    s(0.0f),
+    reflective(false),
+    infScale(false)
+{}
+
 Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, glm::vec3 _ka,
              float _s) :
              pos(_pos),
@@ -15,7 +27,7 @@ Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation, glm::vec3 _k
 
 Shape::Shape(glm::vec3 _pos, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, glm::vec3 _ka, float _s) :
              pos(_pos),
-             scale(_scale),
+             scale(glm::vec3(1.0f)),
              rotation(_rotation),
              kd(_kd),
              ks(_ks),
@@ -39,3 +51,12 @@ Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation) :
 
 Shape::~Shape() {}
 
+float Shape::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 &hitPos, glm::vec3 &hitNor)
+{
+    // Implement basic plane intersection
+    glm::vec3 n = 2.0f * rotation / (float)M_PI;
+    float t = glm::dot(n, pos - p) / glm::dot(n, v);
+    hitPos = p + (t * v);
+    hitNor = n;
+    return t;
+}

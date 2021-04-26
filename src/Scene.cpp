@@ -163,8 +163,12 @@ Scene::Scene(int _scene) :
 
         case 6:
         case 7:
-            //TODO: Actual shapes...
+            //TODO: Actual shapes... (teapot, bunny, etc)
 
+            light1 = std::make_shared<Light>(glm::vec3(-1.0f, 2.0f, 1.0f),
+                                             1.0f
+            );
+            lights.push_back(light1);
             break;
 
         default:
@@ -173,3 +177,52 @@ Scene::Scene(int _scene) :
 }
 
 Scene::~Scene() {}
+
+glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1)
+{
+    std::shared_ptr<Shape> obj;
+    glm::vec3 hitPos(0.0f);
+    glm::vec3 hitNor(0.0f);
+    if(hit(p, v, t0, t1, obj, hitPos, hitNor))
+    {
+        glm::vec3 color = obj->getKA();
+        for(std::shared_ptr<Light> light : lights)
+        {
+            glm::vec3 l = glm::normalize(light->getPos() - hitPos);
+            glm::vec3 e = glm::normalize(p - hitPos);
+            glm::vec3 h = glm::normalize(l + e);
+
+            glm::vec3 kd = obj->getKD() * glm::max(glm::dot(l, v), 0.0f);
+            glm::vec3 ks = obj->getKS() * glm::pow(glm::max(glm::dot(h, v), 0.0f), obj->getS());
+
+            color += light->getIntensity() * (kd + ks);
+        }
+
+        return color;
+    }
+    return glm::vec3();
+}
+
+#include <iostream>
+bool Scene::hit(glm::vec3 p, glm::vec3 v, float t0, float t1, std::shared_ptr<Shape>& obj, glm::vec3& hitPos,
+                glm::vec3& hitNor)
+{
+    bool ret = false;
+    float t = t1;
+    for(std::shared_ptr<Shape> shape : shapes)
+    {
+        glm::vec3 pos;
+        glm::vec3 nor;
+        float s = shape->intersect(p, v, t0, t1, pos, nor);
+        if(s < t)
+        {
+            t = s;
+            obj = shape;
+            hitPos = pos;
+            hitNor = nor;
+            ret = true;
+        }
+    }
+
+    return ret;
+}

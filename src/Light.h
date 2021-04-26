@@ -11,6 +11,9 @@ public:
     Light(glm::vec3 _pos, float _intensity);
     ~Light();
 
+    glm::vec3 getPos() { return pos; }
+    float getIntensity() { return intensity; }
+
 private:
     glm::vec3 pos;
     float intensity;

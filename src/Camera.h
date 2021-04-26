@@ -1,5 +1,5 @@
-#ifndef _CAMERA_H_
-#define _CAMERA_H_
+#ifndef CAMERA_H_
+#define CAMERA_H_
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -11,6 +11,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Scene.h"
+#include "MatrixStack.h"
+#include "Image.h"
+
+// epsilon = 1e-5
 
 class Camera
 {
@@ -19,8 +23,7 @@ public:
     ~Camera();
 
     std::shared_ptr<std::vector<glm::vec3>> generateRays(float z, float imageWidth, float imageHeight);
-
-    void generateScene(Scene scene, int imageSize);
+    void generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize);
 
 private:
     glm::vec3 pos;
