@@ -190,14 +190,20 @@ glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1)
         {
             glm::vec3 n = glm::normalize(hitNor);
             glm::vec3 l = glm::normalize(light->getPos() - hitPos);
-            glm::vec3 e = glm::normalize(p - hitPos);
-            glm::vec3 h = glm::normalize(l + e);
+            std::shared_ptr<Shape> temp;
+            glm::vec3 hitPTemp;
+            glm::vec3 hitNTemp;
+            if(!hit(hitPos, l, 0.0f, 100.0f, temp, hitPTemp, hitNTemp))
+            {
+                glm::vec3 e = glm::normalize(p - hitPos);
+                glm::vec3 h = glm::normalize(l + e);
 
-            glm::vec3 diffuse = obj->getKD() * glm::max(glm::dot(l, n), 0.0f);
-            glm::vec3 specular = obj->getKS() *
-                    glm::pow(glm::max(glm::dot(h, n), 0.0f), obj->getS());
+                glm::vec3 diffuse = obj->getKD() * glm::max(glm::dot(l, n), 0.0f);
+                glm::vec3 specular = obj->getKS() *
+                                     glm::pow(glm::max(glm::dot(h, n), 0.0f), obj->getS());
 
-            color += light->getIntensity() * (diffuse + specular);
+                color += light->getIntensity() * (diffuse + specular);
+            }
         }
 
         return color;
@@ -205,7 +211,6 @@ glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1)
     return glm::vec3(0.0f);
 }
 
-#include <iostream>
 bool Scene::hit(glm::vec3 p, glm::vec3 v, float t0, float t1, std::shared_ptr<Shape>& obj, glm::vec3& hitPos,
                 glm::vec3& hitNor)
 {
