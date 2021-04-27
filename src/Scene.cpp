@@ -2,7 +2,8 @@
 
 Scene::Scene(int _scene) :
              scene(_scene),
-             epsilon(0.0001f)
+             epsilon(0.0001f),
+             reflectLimit(6)
 {
     std::shared_ptr<Shape> redSphere;
     std::shared_ptr<Shape> greenSphere;
@@ -101,8 +102,8 @@ Scene::Scene(int _scene) :
 
         case 4:
         case 5:
-            redSphere = std::make_shared<Sphere>(glm::vec3(-0.5f, 1.0f, 1.0f),
-                                                 glm::vec3(1.0f),
+            redSphere = std::make_shared<Sphere>(glm::vec3(0.5f, -0.7f, 0.5f),
+                                                 glm::vec3(0.3f),
                                                  glm::vec3(0.0f),
                                                  glm::vec3(1.0f, 0.0f, 0.0f),
                                                  glm::vec3(1.0f, 1.0f, 0.5f),
@@ -111,8 +112,8 @@ Scene::Scene(int _scene) :
             );
             shapes.push_back(redSphere);
 
-            blueSphere = std::make_shared<Sphere>(glm::vec3(0.0f, 1.0f, 0.0f),
-                                                  glm::vec3(1.0f),
+            blueSphere = std::make_shared<Sphere>(glm::vec3(1.0f, -0.7f, 0.0f),
+                                                  glm::vec3(0.3f),
                                                   glm::vec3(0.0f),
                                                   glm::vec3(0.0f, 0.0f, 1.0f),
                                                   glm::vec3(1.0f, 1.0f, 0.5f),
@@ -130,7 +131,7 @@ Scene::Scene(int _scene) :
             );
             shapes.push_back(floor);
 
-            wall = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
+            wall = std::make_shared<Plane>(glm::vec3(0.0f, 0.0f, -3.0f),
                                            glm::vec3(0.0f, 0.0f, 1.0f),
                                            glm::vec3(1.0f, 1.0f, 1.0f),
                                            glm::vec3(0.0f, 0.0f, 0.0f),
@@ -185,7 +186,7 @@ glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1, int 
     glm::vec3 color(0.0f);
 
     // If too many recursive calls then return early
-    if(count >= 2)
+    if(count >= reflectLimit)
     {
         return color;
     }

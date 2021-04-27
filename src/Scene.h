@@ -30,6 +30,7 @@ private:
     std::vector<std::shared_ptr<Shape>> shapes;
     std::vector<std::shared_ptr<Light>> lights;
     float epsilon;
+    int reflectLimit;
 };
 
 #endif

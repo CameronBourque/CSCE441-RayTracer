@@ -20,6 +20,6 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j
 
 # Run it
-./$PROGRAM_NAME 3 1024 out.png
+./$PROGRAM_NAME 4 1024 out.png
 
 eog out.png
