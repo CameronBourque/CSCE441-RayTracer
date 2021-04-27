@@ -37,7 +37,7 @@ float Sphere::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 
     float ret = t1;
 
     // See if intersects
-    if(d > t0)
+    if(d > 0.0f)
     {
         // Find first intersection
         float t1_ = (-b + (float)sqrt(d)) / (2.0f * a);
@@ -51,7 +51,7 @@ float Sphere::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 
         }
 
         // Find second intersection
-        float t2_ = (-b + (float)sqrt(d)) / (2.0f * a);
+        float t2_ = (-b - (float)sqrt(d)) / (2.0f * a);
         glm::vec3 x2_ = p_ + (t2_ * v_);
         glm::vec3 x2 = glm::vec3(E * glm::vec4(x2_, 1.0f));
         glm::vec3 n2 = glm::normalize(glm::vec3(E * glm::vec4(x2_, 0.0f)));
@@ -61,7 +61,7 @@ float Sphere::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 
             t2 = -t2;
         }
 
-        // Use smallest intersection
+        // Use smallest distance
         if(t1o < t2)
         {
             hitPos = x1;

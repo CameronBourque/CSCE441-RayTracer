@@ -37,16 +37,6 @@ std::shared_ptr<std::vector<glm::vec3>> Camera::generateRays(float z, float imag
 
 void Camera::generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize)
 {
-    // Generate projection, view and camera matrices
-    std::shared_ptr<MatrixStack> MV = std::make_shared<MatrixStack>();
-    MV->loadIdentity();
-    MV->multMatrix(glm::perspective(fov, aspectRatio, 0.1f, 1000.0f));
-    glm::mat4 P = MV->topMatrix();
-    MV->loadIdentity();
-    MV->multMatrix(glm::lookAt(pos, pos, glm::vec3(0.0f, 1.0f, 0.0f)));
-    glm::mat4 V = MV->topMatrix();
-    glm::mat4 C = inverse(V);
-
     // Create image
     std::shared_ptr<Image> image = std::make_shared<Image>(imageSize, imageSize);
 
@@ -67,14 +57,44 @@ void Camera::generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize
         for(int j = 0; j < imageSize; j++)
         {
             float x = cornerX - (width * ((float)j + 1.0f)) + xOffset;
-            glm::vec3 p = glm::vec3(x, y, z);
             glm::vec3 ray = glm::normalize(glm::vec3(x, y, z) - pos);
 
             // Get color
-            glm::vec3 color = scene->computeColor(p, ray, 0, 1000);
+            glm::vec3 color = scene->computeColor(pos, ray, 0, 100);
+
+            // Clamp color range
+            int red = color.r * 255;
+            if(red > 255)
+            {
+                red = 255;
+            }
+            else if(red < 0)
+            {
+                red = 0;
+            }
+
+            int green = color.g * 255;
+            if(green > 255)
+            {
+                green = 255;
+            }
+            else if(green < 0)
+            {
+                green = 0;
+            }
+
+            int blue = color.b * 255;
+            if(blue > 255)
+            {
+                blue = 255;
+            }
+            else if(blue < 0)
+            {
+                blue = 0;
+            }
 
             // Build image
-            image->setPixel(i, j, (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
+            image->setPixel(imageSize - j - 1, imageSize - i - 1, red, green, blue);
         }
     }
 

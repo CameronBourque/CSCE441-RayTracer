@@ -19,7 +19,7 @@ Scene::Scene(int _scene) :
         case 1:
         case 2:
         case 8:
-            redSphere = std::make_shared<Sphere>(glm::vec3(-0.5f, 1.0f, 1.0f),
+            redSphere = std::make_shared<Sphere>(glm::vec3(-0.5f, -1.0f, 1.0f),
                                                  glm::vec3(1.0f),
                                                  glm::vec3(0.0f),
                                                  glm::vec3(1.0f, 0.0f, 0.0f),
@@ -165,7 +165,7 @@ Scene::Scene(int _scene) :
         case 7:
             //TODO: Actual shapes... (teapot, bunny, etc)
 
-            light1 = std::make_shared<Light>(glm::vec3(-1.0f, 2.0f, 1.0f),
+            light1 = std::make_shared<Light>(glm::vec3(-1.0f, 1.0f, 1.0f),
                                              1.0f
             );
             lights.push_back(light1);
@@ -188,19 +188,21 @@ glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1)
         glm::vec3 color = obj->getKA();
         for(std::shared_ptr<Light> light : lights)
         {
+            glm::vec3 n = glm::normalize(hitNor);
             glm::vec3 l = glm::normalize(light->getPos() - hitPos);
             glm::vec3 e = glm::normalize(p - hitPos);
             glm::vec3 h = glm::normalize(l + e);
 
-            glm::vec3 kd = obj->getKD() * glm::max(glm::dot(l, v), 0.0f);
-            glm::vec3 ks = obj->getKS() * glm::pow(glm::max(glm::dot(h, v), 0.0f), obj->getS());
+            glm::vec3 diffuse = obj->getKD() * glm::max(glm::dot(l, n), 0.0f);
+            glm::vec3 specular = obj->getKS() *
+                    glm::pow(glm::max(glm::dot(h, n), 0.0f), obj->getS());
 
-            color += light->getIntensity() * (kd + ks);
+            color += light->getIntensity() * (diffuse + specular);
         }
 
         return color;
     }
-    return glm::vec3();
+    return glm::vec3(0.0f);
 }
 
 #include <iostream>
