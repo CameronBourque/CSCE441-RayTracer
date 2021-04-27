@@ -1,7 +1,8 @@
 #include "Scene.h"
 
 Scene::Scene(int _scene) :
-             scene(_scene)
+             scene(_scene),
+             epsilon(0.0001f)
 {
     std::shared_ptr<Shape> redSphere;
     std::shared_ptr<Shape> greenSphere;
@@ -78,7 +79,7 @@ Scene::Scene(int _scene) :
             shapes.push_back(greenSphere);
 
             floor = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
-                                            glm::vec3(M_PI / 2, 0.0f, 0.0f), //TODO: Y+ up
+                                            glm::vec3(0.0f, 1.0f, 0.0f),
                                             glm::vec3(1.0f, 1.0f, 1.0f),
                                             glm::vec3(0.0f, 0.0f, 0.0f),
                                             glm::vec3(0.1f, 0.1f, 0.1f),
@@ -121,7 +122,7 @@ Scene::Scene(int _scene) :
             shapes.push_back(blueSphere);
 
             floor = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
-                                            glm::vec3(0.0f, 0.0f, 0.0f), //TODO: Y+ up
+                                            glm::vec3(0.0f, 1.0f, 0.0f),
                                             glm::vec3(1.0f, 1.0f, 1.0f),
                                             glm::vec3(0.0f, 0.0f, 0.0f),
                                             glm::vec3(0.1f, 0.1f, 0.1f),
@@ -130,7 +131,7 @@ Scene::Scene(int _scene) :
             shapes.push_back(floor);
 
             wall = std::make_shared<Plane>(glm::vec3(0.0f, -1.0f, 0.0f),
-                                           glm::vec3(0.0f, 0.0f, 0.0f), //TODO: Z+ up
+                                           glm::vec3(0.0f, 0.0f, 1.0f),
                                            glm::vec3(1.0f, 1.0f, 1.0f),
                                            glm::vec3(0.0f, 0.0f, 0.0f),
                                            glm::vec3(0.1f, 0.1f, 0.1f),
@@ -178,37 +179,64 @@ Scene::Scene(int _scene) :
 
 Scene::~Scene() {}
 
-glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1)
+glm::vec3 Scene::computeColor(glm::vec3 p, glm::vec3 v, float t0, float t1, int count)
 {
+    // Initialize color here as background color
+    glm::vec3 color(0.0f);
+
+    // If too many recursive calls then return early
+    if(count >= 2)
+    {
+        return color;
+    }
+
     std::shared_ptr<Shape> obj;
     glm::vec3 hitPos(0.0f);
     glm::vec3 hitNor(0.0f);
+
+    // See if ray collides with shape
     if(hit(p, v, t0, t1, obj, hitPos, hitNor))
     {
-        glm::vec3 color = obj->getKA();
-        for(std::shared_ptr<Light> light : lights)
+        // See if reflective object
+        if(obj->isReflective())
         {
+            color = computeColor(hitPos, glm::reflect(v, hitNor), epsilon, t1, count+1);
+        }
+        else
+        {
+            // Color starts as ambient color
+            color = obj->getKA();
+
+            // Find e and n
+            glm::vec3 e = glm::normalize(p - hitPos);
             glm::vec3 n = glm::normalize(hitNor);
-            glm::vec3 l = glm::normalize(light->getPos() - hitPos);
-            std::shared_ptr<Shape> temp;
-            glm::vec3 hitPTemp;
-            glm::vec3 hitNTemp;
-            if(!hit(hitPos, l, 0.0f, 100.0f, temp, hitPTemp, hitNTemp))
+
+            // For every light
+            for (std::shared_ptr<Light> light : lights)
             {
-                glm::vec3 e = glm::normalize(p - hitPos);
+                // Find l and h vectors
+                glm::vec3 l = glm::normalize(light->getPos() - hitPos);
                 glm::vec3 h = glm::normalize(l + e);
 
-                glm::vec3 diffuse = obj->getKD() * glm::max(glm::dot(l, n), 0.0f);
-                glm::vec3 specular = obj->getKS() *
-                                     glm::pow(glm::max(glm::dot(h, n), 0.0f), obj->getS());
+                // Throw away variables (don't want to overwrite what we have now)
+                std::shared_ptr<Shape> temp;
+                glm::vec3 hitPTemp;
+                glm::vec3 hitNTemp;
 
-                color += light->getIntensity() * (diffuse + specular);
+                // Check if there's a shadow
+                if (!hit(hitPos, l, epsilon, glm::length(light->getPos() - hitPos), temp, hitPTemp, hitNTemp))
+                {
+                    // Compute diffuse and specular for light
+                    glm::vec3 diffuse = obj->getKD() * glm::max(glm::dot(l, n), 0.0f);
+                    glm::vec3 specular = obj->getKS() *
+                                         glm::pow(glm::max(glm::dot(h, n), 0.0f), obj->getS());
+
+                    color += light->getIntensity() * (diffuse + specular);
+                }
             }
         }
-
-        return color;
     }
-    return glm::vec3(0.0f);
+    return color;
 }
 
 bool Scene::hit(glm::vec3 p, glm::vec3 v, float t0, float t1, std::shared_ptr<Shape>& obj, glm::vec3& hitPos,
@@ -220,9 +248,14 @@ bool Scene::hit(glm::vec3 p, glm::vec3 v, float t0, float t1, std::shared_ptr<Sh
     {
         glm::vec3 pos;
         glm::vec3 nor;
+
+        // Get the intersection distance
         float s = shape->intersect(p, v, t0, t1, pos, nor);
-        if(s < t)
+
+        // See if the distance is the smallest
+        if(s < t && s > t0)
         {
+            // Get record of stuff for later computation
             t = s;
             obj = shape;
             hitPos = pos;

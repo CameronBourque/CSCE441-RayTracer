@@ -12,15 +12,14 @@ else
 	rm -rf *
 fi
 
-# Make the project
-cmake ..
-make -j
+# Configure the project
+cmake -DCMAKE_BUILD_TYPE=Release ..
 
-# Change to release mode
-ccmake ..
+# Change to release mode and build
+#ccmake ..
 make -j
 
 # Run it
-./$PROGRAM_NAME 1 1024 yum.png
+./$PROGRAM_NAME 3 1024 out.png
 
 eog out.png
