@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
+
 class Shape
 {
 public:
@@ -26,6 +28,7 @@ public:
     float getS() const { return s; }
 
     virtual float intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3& hitPos, glm::vec3& hitNor);
+    virtual void addTriangles(std::vector<float>& posBuf) {} // Does nothing, subclasses should use
 
 protected:
     glm::vec3 pos;

@@ -1,6 +1,6 @@
-#include "Sphere.h"
+#include "Object.h"
 
-Sphere::Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation, glm::vec3 kd, glm::vec3 ks, glm::vec3 ka, float s) :
+Object::Object(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation, glm::vec3 kd, glm::vec3 ks, glm::vec3 ka, float s) :
                Shape(pos, scale, rotation, kd, ks, ka, s)
 {
     // Find transformation matrix
@@ -15,25 +15,9 @@ Sphere::Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation, glm::vec3 kd,
     ITE = glm::transpose(IE);
 }
 
-Sphere::Sphere(glm::vec3 pos, glm::vec3 scale, glm::vec3 rotation) :
-               Shape(pos, scale, rotation)
-{
-    // Find transformation matrix
-    auto M = std::make_shared<MatrixStack>();
-    M->translate(pos);
-    M->rotate(rotation.x, 1, 0, 0);
-    M->rotate(rotation.y, 0, 1, 0);
-    M->rotate(rotation.z, 0, 0, 1);
-    M->scale(scale);
-    E = M->topMatrix();
-    IE = glm::inverse(E);
-    ITE = glm::transpose(IE);
-}
+Object::~Object() {}
 
-Sphere::~Sphere() {}
-
-#include <iostream>
-float Sphere::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 &hitPos, glm::vec3 &hitNor)
+float Object::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 &hitPos, glm::vec3 &hitNor)
 {
     // Find p prime and v prime
     glm::vec3 p_ = glm::vec3(IE * glm::vec4(p, 1.0f));
@@ -73,17 +57,20 @@ float Sphere::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 
         }
 
         // Use smallest distance
+        float triT;
         if(ta < tb)
         {
             hitPos = x1;
             hitNor = n1;
             ret = ta;
+            triT = tb;
         }
         else
         {
             hitPos = x2;
             hitNor = n2;
             ret = tb;
+            triT = ta;
         }
 
         // Check range
@@ -91,7 +78,35 @@ float Sphere::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 
         {
             ret = t1 + 1.0f;
         }
+        else
+        {
+            for(std::shared_ptr<Triangle> tri : triangles)
+            {
+                glm::vec3 hPos;
+                glm::vec3 hNor;
+                float t = tri->intersect(p, v, t0, t1, hPos, hNor);
+                if(t < triT)
+                {
+                    triT = t;
+                    hitNor = hNor;
+                    hitPos = hPos;
+                }
+            }
+        }
     }
 
     return ret;
+}
+
+void Object::addTriangles(std::vector<float> &posBuf)
+{
+    for(size_t i = 0; i < posBuf.size(); i += 9)
+    {
+        std::shared_ptr<Triangle> tri = std::make_shared<Triangle>(glm::vec3(posBuf[i], posBuf[i+1], posBuf[i+2]),
+                                                                   glm::vec3(posBuf[i+3], posBuf[i+4], posBuf[i+5]),
+                                                                   glm::vec3(posBuf[i+6], posBuf[i+7], posBuf[i+8]),
+                                                                   E
+        );
+        triangles.push_back(tri);
+    }
 }

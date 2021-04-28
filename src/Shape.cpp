@@ -47,7 +47,6 @@ Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation) :
 
 Shape::~Shape() {}
 
-#include <iostream>
 float Shape::intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3 &hitPos, glm::vec3 &hitNor)
 {
     // Implement basic plane intersection

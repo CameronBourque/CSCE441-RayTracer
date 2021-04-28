@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
+
 #include "Shape.h"
 #include "MatrixStack.h"
 
@@ -16,6 +18,11 @@ public:
     ~Sphere();
 
     virtual float intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3& hitPos, glm::vec3& hitNor);
+
+private:
+    glm::mat4 E;
+    glm::mat4 IE;
+    glm::mat4 ITE;
 };
 
 #endif

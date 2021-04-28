@@ -1,5 +1,11 @@
 #include "Scene.h"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
+
 Scene::Scene(int _scene) :
              scene(_scene),
              epsilon(0.0001f),
@@ -12,6 +18,8 @@ Scene::Scene(int _scene) :
     std::shared_ptr<Shape> refSphere2;
     std::shared_ptr<Shape> floor;
     std::shared_ptr<Shape> wall;
+    std::shared_ptr<Shape> object;
+    std::string objFile = "../resources/bunny.obj";
 
     std::shared_ptr<Light> light1;
     std::shared_ptr<Light> light2;
@@ -164,8 +172,33 @@ Scene::Scene(int _scene) :
             break;
 
         case 6:
+            object = std::make_shared<Object>(glm::vec3(0.0f, 0.0f, 0.0f),
+                                              glm::vec3(0.0f, 0.0f, 0.0f),
+                                              glm::vec3(1.0f),
+                                              glm::vec3(0.0f, 0.0f, 1.0f),
+                                              glm::vec3(1.0f, 1.0f, 0.5f),
+                                              glm::vec3(0.1f, 0.1f, 0.1f),
+                                              100.0f
+            );
+            getTrianglesFromObj(objFile, object);
+
+            light1 = std::make_shared<Light>(glm::vec3(-1.0f, 1.0f, 1.0f),
+                                             1.0f
+            );
+            lights.push_back(light1);
+            break;
+
         case 7:
-            //TODO: Actual shapes... (teapot, bunny, etc)
+            //TODO: Get triangles from shapes
+            object = std::make_shared<Object>(glm::vec3(0.3f, -1.5f, 0.0f),
+                                              glm::vec3(M_PI / 9.0f, 0.0f, 0.0f),
+                                              glm::vec3(1.5f),
+                                              glm::vec3(0.0f, 0.0f, 1.0f),
+                                              glm::vec3(1.0f, 1.0f, 0.5f),
+                                              glm::vec3(0.1f, 0.1f, 0.1f),
+                                              100.0f
+            );
+            getTrianglesFromObj(objFile, object);
 
             light1 = std::make_shared<Light>(glm::vec3(-1.0f, 1.0f, 1.0f),
                                              1.0f
@@ -266,4 +299,54 @@ bool Scene::hit(glm::vec3 p, glm::vec3 v, float t0, float t1, std::shared_ptr<Sh
     }
 
     return ret;
+}
+
+void Scene::getTrianglesFromObj(std::string& meshName, std::shared_ptr<Shape>& obj)
+{
+    // Load geometry
+    std::vector<float> posBuf; // list of vertex positions
+    std::vector<float> norBuf; // list of vertex normals
+    std::vector<float> texBuf; // list of vertex texture coords
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string errStr;
+    bool rc = tinyobj::LoadObj(&attrib, &shapes, &materials, &errStr, meshName.c_str());
+    if(rc)
+    {
+        // Some OBJ files have different indices for vertex positions, normals,
+        // and texture coordinates. For example, a cube corner vertex may have
+        // three different normals. Here, we are going to duplicate all such
+        // vertices.
+        // Loop over shapes
+        for (size_t s = 0; s < shapes.size(); s++) {
+            // Loop over faces (polygons)
+            size_t index_offset = 0;
+            for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+                size_t fv = shapes[s].mesh.num_face_vertices[f];
+                // Loop over vertices in the face.
+                for (size_t v = 0; v < fv; v++) {
+                    // access to vertex
+                    tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+                    posBuf.push_back(attrib.vertices[3 * idx.vertex_index + 0]);
+                    posBuf.push_back(attrib.vertices[3 * idx.vertex_index + 1]);
+                    posBuf.push_back(attrib.vertices[3 * idx.vertex_index + 2]);
+                    if (!attrib.normals.empty()) {
+                        norBuf.push_back(attrib.normals[3 * idx.normal_index + 0]);
+                        norBuf.push_back(attrib.normals[3 * idx.normal_index + 1]);
+                        norBuf.push_back(attrib.normals[3 * idx.normal_index + 2]);
+                    }
+                    if (!attrib.texcoords.empty()) {
+                        texBuf.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
+                        texBuf.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
+                    }
+                }
+                index_offset += fv;
+                // per-face material (IGNORE)
+                shapes[s].mesh.material_ids[f];
+            }
+        }
+
+        obj->addTriangles(posBuf);
+    }
 }

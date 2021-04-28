@@ -1,8 +1,6 @@
 #ifndef SCENE_H_
 #define SCENE_H_
 
-#define _USE_MATH_DEFINES
-#include <cmath>
 #include <vector>
 #include <memory>
 
@@ -14,6 +12,7 @@
 #include "Sphere.h"
 #include "Light.h"
 #include "Plane.h"
+#include "Object.h"
 
 class Scene
 {
@@ -26,6 +25,8 @@ public:
              glm::vec3& hitNor);
 
 private:
+    void getTrianglesFromObj(std::string& meshName, std::shared_ptr<Shape>& obj);
+
     int scene;
     std::vector<std::shared_ptr<Shape>> shapes;
     std::vector<std::shared_ptr<Light>> lights;
