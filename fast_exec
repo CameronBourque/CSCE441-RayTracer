@@ -9,14 +9,15 @@ then
 	cd build
 else
 	cd build
+	mv $PROGRAM_NAME ..
 	rm -rf *
+	mv ../$PROGRAM_NAME .
 fi
 
-# Configure the project
+# Configure the project in release mode
 cmake -DCMAKE_BUILD_TYPE=Release ..
 
 # Change to release mode and build
-#ccmake ..
 make -j
 
 # Run it
