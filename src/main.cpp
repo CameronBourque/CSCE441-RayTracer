@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
 	Camera camera(glm::vec3(0.0f, 0.0f, 5.0f), M_PI / 4.0f, 1.0f);
     std::shared_ptr<Scene> scene = make_shared<Scene>(sceneNum);
-    camera.generateScene(scene, 4.0f, imageSize);
+    camera.generateScene(scene, 4.0f, imageSize, imageFilename);
 	
 	return 0;
 }

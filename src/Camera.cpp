@@ -7,7 +7,7 @@ Camera::Camera(glm::vec3 _pos, float _fov, float _aspectRatio) :
 Camera::~Camera()
 {}
 
-void Camera::generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize)
+void Camera::generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize, std::string filename)
 {
     // Create image
     std::shared_ptr<Image> image = std::make_shared<Image>(imageSize, imageSize);
@@ -71,5 +71,5 @@ void Camera::generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize
     }
 
     // Write to file
-    image->writeToFile("out.png");
+    image->writeToFile(filename);
 }

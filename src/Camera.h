@@ -5,6 +5,7 @@
 #include <cmath>
 #include <vector>
 #include <memory>
+#include <string>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -22,7 +23,7 @@ public:
     Camera(glm::vec3 _pos, float _fov, float _aspectRatio);
     ~Camera();
 
-    void generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize);
+    void generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize, std::string filename);
 
 private:
     glm::vec3 pos;
