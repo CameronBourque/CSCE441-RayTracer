@@ -16,14 +16,14 @@ public:
     Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation);
     ~Shape();
 
-    bool isReflective() { return reflective; }
+    bool isReflective() const { return reflective; }
     glm::vec3 getPos() { return pos; }
     glm::vec3 getScale() { return scale; }
     glm::vec3 getRotation() { return rotation; }
     glm::vec3 getKA() { return ka; }
     glm::vec3 getKD() { return kd; }
     glm::vec3 getKS() { return ks; }
-    float getS() { return s; }
+    float getS() const { return s; }
 
     virtual float intersect(glm::vec3 p, glm::vec3 v, float t0, float t1, glm::vec3& hitPos, glm::vec3& hitNor);
 
@@ -36,7 +36,6 @@ protected:
     glm::vec3 ka;
     float s;
     bool reflective;
-    bool infScale;
 };
 
 #endif

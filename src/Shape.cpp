@@ -8,8 +8,7 @@ Shape::Shape() :
     ks(0.0f),
     ka(0.0f),
     s(0.0f),
-    reflective(false),
-    infScale(false)
+    reflective(false)
 {}
 
 Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, glm::vec3 _ka,
@@ -21,8 +20,7 @@ Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation, glm::vec3 _k
              ks(_ks),
              ka(_ka),
              s(_s),
-             reflective(false),
-             infScale(false)
+             reflective(false)
 {}
 
 Shape::Shape(glm::vec3 _pos, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, glm::vec3 _ka, float _s) :
@@ -33,8 +31,7 @@ Shape::Shape(glm::vec3 _pos, glm::vec3 _rotation, glm::vec3 _kd, glm::vec3 _ks, 
              ks(_ks),
              ka(_ka),
              s(_s),
-             reflective(false),
-             infScale(true)
+             reflective(false)
 {}
 
 Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation) :
@@ -45,8 +42,7 @@ Shape::Shape(glm::vec3 _pos, glm::vec3 _scale, glm::vec3 _rotation) :
              ks(0.0f),
              ka(0.0f),
              s(0.0f),
-             reflective(true),
-             infScale(false)
+             reflective(true)
 {}
 
 Shape::~Shape() {}

@@ -22,7 +22,6 @@ public:
     Camera(glm::vec3 _pos, float _fov, float _aspectRatio);
     ~Camera();
 
-    std::shared_ptr<std::vector<glm::vec3>> generateRays(float z, float imageWidth, float imageHeight);
     void generateScene(std::shared_ptr<Scene>& scene, float z, int imageSize);
 
 private:
