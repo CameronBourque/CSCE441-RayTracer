@@ -1,5 +1,7 @@
 # CSCE441-Assignment-6
 
 Cameron Bourque
-Highest scene: Scene 8
+826004886
+tobeornottobe@tamu.edu
+Highest scene: Scene 5
 
